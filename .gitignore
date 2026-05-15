@@ -1,0 +1,43 @@
+# Python / Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env_folder/
+
+# Environment Variables & Secrets
+
+.env
+.env.*
+*.local
+secrets.json
+
+# Data & RAG Specific Files
+/data/
+*.pdf
+*.csv
+*.json
+*.txt
+
+# Vector Database local storage 
+chroma_db/
+/faiss_index/
+/vectorstore/
+*.db
+*.sqlite3
+
+
+# Logs & Caches
+*.log
+logs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
