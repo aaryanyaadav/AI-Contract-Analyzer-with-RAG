@@ -14,12 +14,7 @@ env/
 *.local
 secrets.json
 
-# Data & RAG Specific Files
-/data/
-*.pdf
-*.csv
-*.json
-*.txt
+
 
 # Vector Database local storage 
 chroma_db/
@@ -37,7 +32,7 @@ logs/
 .ruff_cache/
 
 # OS & IDE Files
-.DS_Store
+.DS_Store   
 Thumbs.db
 .vscode/
 .idea/
