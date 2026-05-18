@@ -1,0 +1,9 @@
+pymupdf
+python-docx
+pytesseract
+pillow
+streamlit
+fastapi
+uvicorn
+python-multipart
+    
