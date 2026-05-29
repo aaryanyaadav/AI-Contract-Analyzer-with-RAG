@@ -1,23 +1,129 @@
 import os
-from ingestion.docling_parser import DoclingParser
+
+from ingestion.docling_parser import (
+    DoclingParser
+)
+
+from ingestion.fast_pdf_parser import (
+    FastPDFParser
+)
+
 
 class DocumentRouter:
 
     def __init__(self):
-        self.docling_parser = DoclingParser()
 
-    def route_document(self, file_path):
-        extension = os.path.splitext(file_path)[1].lower()
+        self.docling_parser = (
+            DoclingParser()
+        )
 
-        # Route 1: Local Machine Heavy Layout/OCR Parser (PDFs + Flat Images)
-        if extension in [".pdf", ".png", ".jpg", ".jpeg"]:
-            print(f"Routing {extension} to Local Heavy Vision/OCR Pipeline...")
-            return self.docling_parser.parse_complex_document(file_path)
+        self.fast_pdf_parser = (
+            FastPDFParser()
+        )
 
-        # Route 2: Native/Digital Text Documents
-        elif extension in [".docx", ".txt", ".md"]:
-            print(f"Routing {extension} to Lightweight Text Pipeline...")
-            return self.docling_parser.parse_simple_document(file_path)
+    # router
+    
+    def route_document(
 
+        self,
+
+        file_path
+    ):
+
+        extension = os.path.splitext(
+            file_path
+        )[1].lower()
+
+        # pdf routing
+        if extension == ".pdf":
+
+            has_text = (
+                self.fast_pdf_parser
+                .has_extractable_text(
+                    file_path
+                )
+            )
+
+            # text pdf
+            if has_text:
+
+                print(
+                    "Routing PDF to "
+                    "Fast Text Parser..."
+                )
+
+                return (
+                    self.fast_pdf_parser
+                    .parse(file_path)
+                )
+
+            # Scaned pdf
+            else:
+
+                print(
+                    "Routing PDF to "
+                    "Heavy OCR Pipeline..."
+                )
+
+                return (
+                    self.docling_parser
+                    .parse_complex_document(
+                        file_path
+                    )
+                )
+
+        # Image files
+        
+        elif extension in [
+
+            ".png",
+
+            ".jpg",
+
+            ".jpeg"
+        ]:
+
+            print(
+                f"Routing {extension} "
+                f"to OCR/Vision Pipeline..."
+            )
+
+            return (
+                self.docling_parser
+                .parse_complex_document(
+                    file_path
+                )
+            )
+
+        # text files 
+        elif extension in [
+
+            ".docx",
+
+            ".txt",
+
+            ".md"
+        ]:
+
+            print(
+                f"Routing {extension} "
+                f"to Lightweight Text Pipeline..."
+            )
+
+            return (
+                self.docling_parser
+                .parse_simple_document(
+                    file_path
+                )
+            )
+
+        # unsupported format
+ 
         else:
-            raise TypeError(f"DocumentRouter blocked unsupported file type: {extension}")
+
+            raise TypeError(
+
+                "DocumentRouter blocked "
+                f"unsupported file type: "
+                f"{extension}"
+            )
