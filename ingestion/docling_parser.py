@@ -18,7 +18,7 @@ class DoclingParser:
         """Runs the deep, local machine layout and OCR parsing pipeline."""
         print(f"[DoclingParser] Executing local complex AI/OCR parse on: {file_path}")
         result = self.complex_converter.convert(file_path)
-        return result.pages_document if hasattr(result, "pages_document") else result.document
+        return result.document
 
     def parse_simple_document(self, file_path: str):
         """Runs a lightweight native text extraction pipeline."""
