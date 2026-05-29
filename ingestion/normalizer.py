@@ -7,10 +7,6 @@ from docling_core.types.doc import (
 
 
 class DocumentNormalizer:
-
-    # =====================================
-    # ITERATOR WRAPPER
-    # =====================================
     def _iter_document_items(
 
         self,
@@ -18,18 +14,12 @@ class DocumentNormalizer:
         document
     ):
 
-        # =================================
-        # CASE 1 — DOC OBJECT
-        # =================================
         if hasattr(document, "iterate_items"):
 
             yield from document.iterate_items()
 
             return
 
-        # =================================
-        # CASE 2 — LIST OUTPUT
-        # =================================
         if isinstance(document, list):
 
             for item in document:
@@ -54,9 +44,6 @@ class DocumentNormalizer:
 
             return
 
-    # =====================================
-    # NORMALIZATION
-    # =====================================
     def normalize_document(
 
         self,
@@ -64,10 +51,7 @@ class DocumentNormalizer:
         document
     ):
 
-        # =================================
-        # FAST PATH
-        # Already normalized
-        # =================================
+
         if (
 
             isinstance(document, list)
@@ -91,18 +75,12 @@ class DocumentNormalizer:
 
         in_toc = False
 
-        # =================================
-        # ITERATE ITEMS
-        # =================================
         for item, level in (
             self._iter_document_items(
                 document
             )
         ):
 
-            # =================================
-            # DICT FORMAT
-            # =================================
             if isinstance(item, dict):
 
                 normalized_blocks.append(item)
@@ -118,9 +96,6 @@ class DocumentNormalizer:
                 "unknown"
             )
 
-            # =================================
-            # PAGE NUMBER
-            # =================================
             if getattr(item, "prov", None):
 
                 page_num = (
@@ -131,9 +106,6 @@ class DocumentNormalizer:
 
                 page_num = 1
 
-            # =================================
-            # REMOVE HEADERS/FOOTERS
-            # =================================
             if label in [
 
                 "page_header",
@@ -145,9 +117,6 @@ class DocumentNormalizer:
 
                 continue
 
-            # =================================
-            # TOC DETECTION
-            # =================================
             if isinstance(item, TextItem):
 
                 text_content = (
@@ -197,16 +166,11 @@ class DocumentNormalizer:
 
                     in_toc = False
 
-            # =================================
-            # SKIP TOC CONTENT
-            # =================================
+
             if in_toc:
 
                 continue
 
-            # =================================
-            # BLOCK STRUCTURE
-            # =================================
             block_data = {
 
                 "label": label,
@@ -225,9 +189,7 @@ class DocumentNormalizer:
                 )
             }
 
-            # =================================
-            # TEXT ITEMS
-            # =================================
+
             if isinstance(item, TextItem):
 
                 cleaned_text = (
@@ -246,9 +208,6 @@ class DocumentNormalizer:
 
                 block_data["is_table"] = False
 
-            # =================================
-            # TABLE ITEMS
-            # =================================
             elif isinstance(item, TableItem):
 
                 try:
@@ -275,9 +234,6 @@ class DocumentNormalizer:
 
         return normalized_blocks
 
-    # =====================================
-    # TEXT CLEANING
-    # =====================================
     def clean_text(
 
         self,
