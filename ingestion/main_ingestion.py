@@ -1,0 +1,261 @@
+import uuid
+import os
+
+from ingestion.validator import (
+    validate_file
+)
+
+from ingestion.route import (
+    DocumentRouter
+)
+
+from ingestion.normalizer import (
+    DocumentNormalizer
+)
+
+from ingestion.metadata_builder import (
+    MetadataBuilder
+)
+
+from ingestion.document_serializer import (
+    DocumentSerializer
+)
+
+from ingestion.chunker import (
+    ClauseChunker
+)
+
+from ingestion.vector_store import (
+    ContractVectorStore
+)
+
+from backend.storage.document_registry import (
+    DocumentRegistry
+)
+
+from risk_analysis.llm_risk_classifier import (
+    LLMRiskClassifier
+)
+
+
+class IngestionPipeline:
+
+    def __init__(
+
+        self,
+
+        chroma_path,
+
+        registry_path=None
+    ):
+
+        # =====================================
+        # CORE COMPONENTS
+        # =====================================
+        self.router = (
+            DocumentRouter()
+        )
+
+        self.normalizer = (
+            DocumentNormalizer()
+        )
+
+        self.chunker = (
+            ClauseChunker()
+        )
+
+        self.metadata_builder = (
+            MetadataBuilder()
+        )
+
+        self.serializer = (
+            DocumentSerializer()
+        )
+
+        self.vector_store = (
+            ContractVectorStore(
+                db_path=chroma_path
+            )
+        )
+
+        self.registry = (
+            DocumentRegistry()
+            if registry_path is None
+            else DocumentRegistry(
+                registry_path=registry_path
+            )
+        )
+
+        self.risk_classifier = (
+            LLMRiskClassifier()
+        )
+
+    # =========================================
+    # MAIN INGESTION
+    # =========================================
+    def ingest_document(
+
+        self,
+
+        file_path,
+
+        original_filename=None
+    ):
+
+        # =====================================
+        # VALIDATION
+        # =====================================
+        validate_file(file_path)
+
+        # =====================================
+        # IDS
+        # =====================================
+        document_id = str(
+            uuid.uuid4()
+        )
+
+        filename = (
+            original_filename
+            if original_filename
+            else os.path.basename(
+                file_path
+            )
+        )
+
+        # =====================================
+        # PARSE DOCUMENT
+        # =====================================
+        parsed_document = (
+            self.router.route_document(
+                file_path
+            )
+        )
+
+        # =====================================
+        # NORMALIZE
+        # =====================================
+        normalized_blocks = (
+            self.normalizer.normalize_document(
+                parsed_document
+            )
+        )
+
+        # =====================================
+        # CHUNK
+        # =====================================
+        chunks = (
+            self.chunker.split_into_clauses(
+                normalized_blocks
+            )
+        )
+
+        # =====================================
+        # RISK CLASSIFICATION
+        # =====================================
+        batch_size = 5
+
+        for i in range(
+
+            0,
+
+            len(chunks),
+
+            batch_size
+        ):
+
+            chunk_batch = chunks[
+                i:i + batch_size
+            ]
+
+            risk_results = (
+
+                self.risk_classifier
+                .classify_risk_batch(
+                    chunk_batch
+                )
+            )
+
+            for chunk, risk_data in zip(
+
+                chunk_batch,
+
+                risk_results
+            ):
+
+                chunk["risk_level"] = (
+                    risk_data.get(
+                        "risk_level",
+                        "Low"
+                    )
+                )
+
+                chunk["risk_category"] = (
+                    risk_data.get(
+                        "risk_category",
+                        "Other"
+                    )
+                )
+
+                chunk["risk_reason"] = (
+                    risk_data.get(
+                        "risk_reason",
+                        ""
+                    )
+                )
+
+        # =====================================
+        # VECTOR STORAGE
+        # =====================================
+        self.vector_store.upsert_chunks(
+
+            document_id=document_id,
+
+            filename=filename,
+
+            chunks=chunks
+        )
+
+        # =====================================
+        # METADATA
+        # =====================================
+        metadata = (
+            self.metadata_builder
+            .build_metadata(
+
+                document_id=document_id,
+
+                filename=filename,
+
+                chunks=chunks
+            )
+        )
+
+        # =====================================
+        # REGISTRY
+        # =====================================
+        self.registry.register_document(
+
+            document_id=document_id,
+
+            filename=filename,
+
+            metadata=metadata
+        )
+
+        # =====================================
+        # SERIALIZATION
+        # =====================================
+        final_json_document = (
+            self.serializer.serialize_document(
+
+                document_id=document_id,
+
+                filename=filename,
+
+                metadata=metadata,
+
+                chunks=chunks
+            )
+        )
+
+        return final_json_document
