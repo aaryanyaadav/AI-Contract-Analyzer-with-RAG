@@ -25,9 +25,7 @@ class MMRRetriever:
             )
         )
 
-    # =====================================
-    # MAXIMAL MARGINAL RELEVANCE
-    # =====================================
+
     def maximal_marginal_relevance(
 
         self,
@@ -41,9 +39,7 @@ class MMRRetriever:
         top_k=5
     ):
 
-        # =====================================
-        # FORCE FLOAT32 TENSORS
-        # =====================================
+
         query_embedding = torch.tensor(
 
             query_embedding,
@@ -60,9 +56,7 @@ class MMRRetriever:
 
         selected_indices = []
 
-        # =====================================
-        # QUERY SIMILARITY
-        # =====================================
+
         similarity_to_query = cos_sim(
 
             query_embedding,
@@ -71,9 +65,6 @@ class MMRRetriever:
 
         )[0].numpy()
 
-        # =====================================
-        # FIRST BEST MATCH
-        # =====================================
         first_idx = np.argmax(
             similarity_to_query
         )
@@ -82,9 +73,6 @@ class MMRRetriever:
             first_idx
         )
 
-        # =====================================
-        # ITERATIVE MMR SELECTION
-        # =====================================
         while len(selected_indices) < min(
 
             top_k,
@@ -105,16 +93,11 @@ class MMRRetriever:
 
             for idx in remaining_indices:
 
-                # =============================
-                # RELEVANCE
-                # =============================
+
                 relevance = (
                     similarity_to_query[idx]
                 )
 
-                # =============================
-                # DIVERSITY
-                # =============================
                 diversity = max([
 
                     cos_sim(
@@ -131,9 +114,7 @@ class MMRRetriever:
                     in selected_indices
                 ])
 
-                # =============================
-                # MMR SCORE
-                # =============================
+
                 mmr_score = (
 
                     lambda_param * relevance
@@ -146,9 +127,7 @@ class MMRRetriever:
                     (idx, mmr_score)
                 )
 
-            # =============================
-            # SELECT BEST NEXT CHUNK
-            # =============================
+
             next_selected = max(
 
                 mmr_scores,
@@ -162,9 +141,7 @@ class MMRRetriever:
 
         return selected_indices
 
-    # =====================================
-    # RETRIEVE
-    # =====================================
+
     def retrieve(
 
         self,
@@ -178,9 +155,7 @@ class MMRRetriever:
         final_k=5
     ):
 
-        # =====================================
-        # QUERY EMBEDDING
-        # =====================================
+
         query_embedding = np.array(
 
             self.vector_store.encoder.encode(
@@ -193,9 +168,7 @@ class MMRRetriever:
             dtype=np.float32
         )
 
-        # =====================================
-        # VECTOR SEARCH
-        # =====================================
+
         results = (
             self.vector_store.collection.query(
 
@@ -219,9 +192,7 @@ class MMRRetriever:
             )
         )
 
-        # =====================================
-        # SAFETY CHECK
-        # =====================================
+
         if (
             not results["documents"]
             or
@@ -241,9 +212,6 @@ class MMRRetriever:
             dtype=np.float32
         )
 
-        # =====================================
-        # MMR SELECTION
-        # =====================================
         selected_indices = (
             self.maximal_marginal_relevance(
 
@@ -257,9 +225,6 @@ class MMRRetriever:
             )
         )
 
-        # =====================================
-        # FINAL RESULTS
-        # =====================================
         final_results = []
 
         for idx in selected_indices:
