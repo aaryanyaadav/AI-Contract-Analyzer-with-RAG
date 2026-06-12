@@ -36,3 +36,9 @@ logs/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local session storage & DBs
+storage/sessions/
+storage/chat_memory/
+storage/chroma_db/
+storage/llm_daily_usage.json
