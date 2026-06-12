@@ -15,9 +15,7 @@ class DocumentRegistry:
 
         self.registry_path = registry_path
 
-        # =====================================
-        # Ensure storage directory exists
-        # =====================================
+
         os.makedirs(
 
             os.path.dirname(
@@ -27,9 +25,7 @@ class DocumentRegistry:
             exist_ok=True
         )
 
-        # =====================================
-        # Create empty registry if missing
-        # =====================================
+
         if not os.path.exists(
             self.registry_path
         ):
@@ -46,9 +42,7 @@ class DocumentRegistry:
 
                 json.dump([], f)
 
-    # =========================================
-    # REGISTER DOCUMENT
-    # =========================================
+
     def register_document(
 
         self,
@@ -115,9 +109,7 @@ class DocumentRegistry:
             f"document: {document_id}"
         )
 
-    # =========================================
-    # GET ALL DOCUMENTS
-    # =========================================
+    
     def get_all_documents(self):
 
         with open(
@@ -132,9 +124,7 @@ class DocumentRegistry:
 
             return json.load(f)
 
-    # =========================================
-    # DELETE DOCUMENT
-    # =========================================
+    
     def delete_document(
 
         self,
@@ -173,9 +163,7 @@ class DocumentRegistry:
             f"document: {document_id}"
         )
 
-    # =========================================
-    # RENAME DOCUMENT
-    # =========================================
+    
     def rename_document(
 
         self,
