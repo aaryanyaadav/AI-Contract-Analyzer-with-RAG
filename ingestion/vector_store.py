@@ -270,3 +270,14 @@ class ContractVectorStore:
             f"[VectorStore] Deleted "
             f"document: {document_id}"
         )
+
+    def close(self):
+
+        if hasattr(self, 'client') and self.client:
+
+            self.client.close()
+
+            print(
+                f"[VectorStore] Closed connection "
+                f"to ChromaDB: {self.db_path}"
+            )
