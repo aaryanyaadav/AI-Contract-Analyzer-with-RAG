@@ -49,9 +49,7 @@ class IngestionPipeline:
         registry_path=None
     ):
 
-        # =====================================
-        # CORE COMPONENTS
-        # =====================================
+        # core components
         self.router = (
             DocumentRouter()
         )
@@ -90,9 +88,8 @@ class IngestionPipeline:
             LLMRiskClassifier()
         )
 
-    # =========================================
-    # MAIN INGESTION
-    # =========================================
+    # main ingestion
+    
     def ingest_document(
 
         self,
@@ -102,14 +99,12 @@ class IngestionPipeline:
         original_filename=None
     ):
 
-        # =====================================
-        # VALIDATION
-        # =====================================
+        # validation
+        
         validate_file(file_path)
 
-        # =====================================
-        # IDS
-        # =====================================
+        # ids
+        
         document_id = str(
             uuid.uuid4()
         )
@@ -122,36 +117,32 @@ class IngestionPipeline:
             )
         )
 
-        # =====================================
-        # PARSE DOCUMENT
-        # =====================================
+        # parse document
+        
         parsed_document = (
             self.router.route_document(
                 file_path
             )
         )
 
-        # =====================================
-        # NORMALIZE
-        # =====================================
+        # normalize
+        
         normalized_blocks = (
             self.normalizer.normalize_document(
                 parsed_document
             )
         )
 
-        # =====================================
-        # CHUNK
-        # =====================================
+        # chunk
+        
         chunks = (
             self.chunker.split_into_clauses(
                 normalized_blocks
             )
         )
 
-        # =====================================
-        # RISK CLASSIFICATION
-        # =====================================
+        # risk classification
+        
         batch_size = 5
 
         for i in range(
@@ -203,9 +194,8 @@ class IngestionPipeline:
                     )
                 )
 
-        # =====================================
-        # VECTOR STORAGE
-        # =====================================
+        # vector storage
+        
         self.vector_store.upsert_chunks(
 
             document_id=document_id,
@@ -215,9 +205,8 @@ class IngestionPipeline:
             chunks=chunks
         )
 
-        # =====================================
-        # METADATA
-        # =====================================
+        # metadata
+        
         metadata = (
             self.metadata_builder
             .build_metadata(
@@ -230,9 +219,8 @@ class IngestionPipeline:
             )
         )
 
-        # =====================================
-        # REGISTRY
-        # =====================================
+        # registry
+        
         self.registry.register_document(
 
             document_id=document_id,
@@ -242,9 +230,8 @@ class IngestionPipeline:
             metadata=metadata
         )
 
-        # =====================================
-        # SERIALIZATION
-        # =====================================
+        # serialization
+        
         final_json_document = (
             self.serializer.serialize_document(
 
@@ -259,3 +246,9 @@ class IngestionPipeline:
         )
 
         return final_json_document
+
+    def close(self):
+
+        if hasattr(self, 'vector_store') and self.vector_store:
+
+            self.vector_store.close()
