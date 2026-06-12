@@ -21,9 +21,8 @@ class ClauseChunker:
             overlap_size
         )
 
-        # =====================================
-        # LEGAL SECTION HEADER DETECTION
-        # =====================================
+        # legal section detection
+        
         self.section_pattern = re.compile(
 
             r'^('
@@ -37,9 +36,7 @@ class ClauseChunker:
             re.IGNORECASE
         )
 
-    # =========================================
-    # MAIN CHUNKING
-    # =========================================
+    # main chunking
     def split_into_clauses(
 
         self,
@@ -85,9 +82,8 @@ class ClauseChunker:
                 label == "table"
             )
 
-            # =================================
-            # SECTION HEADER DETECTION
-            # =================================
+            # section header detection
+            
             is_section_header = (
 
                 label in [
@@ -102,18 +98,15 @@ class ClauseChunker:
                 )
             )
 
-            # =================================
-            # UPDATE ACTIVE SECTION
-            # =================================
+            # update active section
+            
             if is_section_header:
 
                 current_section = text[:150]
 
             text_length = len(text)
 
-            # =================================
-            # HARD CHUNK SPLIT
-            # =================================
+            
             should_split = (
 
                 current_length + text_length
@@ -135,9 +128,8 @@ class ClauseChunker:
                     packaged_chunk
                 )
 
-                # =============================
-                # OVERLAP PRESERVATION
-                # =============================
+                # overlap preservation
+                
                 overlap_text = (
                     packaged_chunk["text"][
                         -self.overlap_size:
@@ -159,9 +151,8 @@ class ClauseChunker:
                     overlap_text
                 )
 
-            # =================================
-            # APPEND CURRENT BLOCK
-            # =================================
+            # append current block
+            
             current_chunk.append({
 
                 "text": text,
@@ -178,9 +169,8 @@ class ClauseChunker:
 
             current_length += text_length
 
-        # =====================================
-        # FINAL FLUSH
-        # =====================================
+        # final flush
+        
         if current_chunk:
 
             chunks.append(
@@ -195,9 +185,8 @@ class ClauseChunker:
 
         return chunks
 
-    # =========================================
-    # PACKAGE CHUNK
-    # =========================================
+    # package chunk
+    
     def _package_chunk(
 
         self,
