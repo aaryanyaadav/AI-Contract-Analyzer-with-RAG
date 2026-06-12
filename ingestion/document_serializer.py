@@ -19,9 +19,7 @@ class DocumentSerializer:
 
         final_document = {
 
-            # =====================================
-            # IMPORTANT
-            # =====================================
+
             "document_id": document_id,
 
             "filename": filename,
