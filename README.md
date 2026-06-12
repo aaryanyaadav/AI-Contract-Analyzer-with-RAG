@@ -12,23 +12,17 @@ This project uses a session-isolated storage architecture. All user uploads, emb
   <h2>Tech Stack</h2>
   
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" />
-  
-  <br><br>
-  
   <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white" />
+  <img src="https://img.shields.io/badge/Uvicorn-490A3D?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
   
   <br><br>
   
-  <img src="https://img.shields.io/badge/NLTK-003366?style=for-the-badge&logo=nltk&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/GloVe%20Embeddings-4B0082?style=for-the-badge&logo=github&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/Uvicorn-490A3D?style=for-the-badge&logo=uvicorn&logoColor=white" /> &nbsp;
-  <img src="https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white" />
+  <img src="https://img.shields.io/badge/PyMuPDF-FF6F00?style=for-the-badge&logo=adobe&logoColor=white" /> &nbsp;
+  <img src="https://img.shields.io/badge/Python--Docx-2B579A?style=for-the-badge&logo=microsoftword&logoColor=white" /> &nbsp;
+  <img src="https://img.shields.io/badge/Tesseract--OCR-4B0082?style=for-the-badge&logo=google&logoColor=white" /> &nbsp;
+  <img src="https://img.shields.io/badge/Pillow-333333?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;
+  <img src="https://img.shields.io/badge/Groq--SDK-F5A623?style=for-the-badge&logo=openai&logoColor=white" />
 </div>
 
 ---
@@ -276,7 +270,7 @@ Below are structured layout blocks where you can add screenshots of your running
 <table>
   <tr>
     <td align="center">
-      <img src="readme_assets/chatjpg" alt="Memory Based Chat Screen" width="100%"/>
+      <img src="readme_assets/chat.jpg" alt="Memory Based Chat Screen" width="100%"/>
     </td>
   </tr>
 </table>
@@ -332,7 +326,7 @@ LLM_DAILY_USAGE_PATH=storage/llm_daily_usage.json
 
 ### 5. Start Backend Server
 ```bash
-uvicorn backend.api.main:app --reload --host 127.0.0.1 --port 8000
+uvicorn backend.api.main:app
 ```
 
 ### 6. Start Frontend App
