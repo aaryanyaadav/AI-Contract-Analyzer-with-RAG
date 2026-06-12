@@ -343,33 +343,6 @@ Ensure your browser has access to the local port `8000` to hit the REST endpoint
 
 ---
 
-##  Operational Notes & Troubleshooting
-
-### Operational Guidelines
-- **Scoping**: Chat queries are strictly scoped to the active selected document.
-- **Conversation Memory**: Conversation histories are saved per-document inside their respective session directories.
-- **API Protection**: The shared daily LLM request quota prevents public API key exhaustion.
-
-### Troubleshooting Scenarios
-
-> [!WARNING]
-> **Upload Works, But Chat Requests Fail**
-> - Verify that a contract is selected as active in your browser sidebar.
-> - Verify that the document's indexing database directory (`storage/sessions/<session_id>/chroma_db/`) exists.
-> - Verify that your `GROQ_API_KEY` is active and the daily quota limit hasn't been exhausted.
-
-> [!IMPORTANT]
-> **Local Disk Space / Storage Growing Too Large**
-> - Ask users to end sessions when they finish.
-> - Use cron jobs or backend startup checks to prune orphaned `storage/sessions/<session_id>/` directories older than 24 hours.
-
-> [!NOTE]
-> **Answers Seem Out-of-Context or Inaccurate**
-> - Confirm the active `document_id` matches the document you are looking at.
-> - Searchable text PDF extraction issues can sometimes yield clean but empty sections; verify if the parser returned sufficient text chunks during upload.
-
----
-
 ##  Key Design Principles & Roadmap
 
 ### Key Design Principles
@@ -377,12 +350,6 @@ Ensure your browser has access to the local port `8000` to hit the REST endpoint
 2. **True Grounding**: All LLM queries must base responses strictly on indexed context chunks to avoid hallucinated liability reviews.
 3. **Simple Teardown**: Simple folder purges erase all session traces.
 4. **Intuitive UX**: Rich visual feedback channels state progress directly to users.
-
-### Suggested Roadmap Improvements
-- [ ] **Remote Quota Management**: Migrate storage quota counters from a shared JSON file to Redis for multi-worker containerized deployments.
-- [ ] **Document Previews**: Serve uploaded PDF binaries directly from the backend server to display document previews side-by-side with chat.
-- [ ] **Multi-Document Analysis**: Enable comparison routing to evaluate liability differences between two selected contracts.
-- [ ] **OAuth Authentication**: Add simple, secure OAuth/JWT identity management to support persistent user histories if requested.
 
 ---
 
