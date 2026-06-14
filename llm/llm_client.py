@@ -1,12 +1,10 @@
 import os
 import json
 import threading
-
 from datetime import datetime
-
 from dotenv import load_dotenv
+from groq import Groq
 from openai import OpenAI
-
 
 load_dotenv()
 
