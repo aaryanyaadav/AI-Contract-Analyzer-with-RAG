@@ -18,9 +18,6 @@ class ConversationMemory:
             exist_ok=True
         )
 
-    # =====================================
-    # MEMORY FILE PATH
-    # =====================================
     def _get_memory_path(
         self,
         document_id
@@ -33,9 +30,6 @@ class ConversationMemory:
             f"{document_id}.json"
         )
 
-    # =====================================
-    # LOAD MEMORY
-    # =====================================
     def load_memory(
         self,
         document_id
@@ -56,9 +50,7 @@ class ConversationMemory:
 
             return json.load(f)
 
-    # =====================================
-    # SAVE MEMORY
-    # =====================================
+
     def save_memory(
 
         self,
@@ -84,9 +76,6 @@ class ConversationMemory:
                 indent=2
             )
 
-    # =====================================
-    # APPEND MESSAGE
-    # =====================================
     def append_message(
 
         self,
@@ -117,9 +106,7 @@ class ConversationMemory:
             memory
         )
 
-    # =====================================
-    # CLEAR MEMORY
-    # =====================================
+
     def clear_memory(
         self,
         document_id
