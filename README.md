@@ -1,4 +1,4 @@
-# ContractFlow AI — Intelligent Contract Analyzer with Grounded RAG
+# ContractFlow AI — Contract Analyzer with RAG
 
 An enterprise-grade, privacy-first legal document assistant powered by **Retrieval-Augmented Generation (RAG)**. ContractFlow AI automatically processes, parses, normalizes, indexes, and queries complex contracts. By utilizing multi-stage safety guardrails, Max Marginal Relevance (MMR) retrieval, and cross-encoder re-ranking, it guarantees grounded, hallucination-free, and context-rich answers.
 
@@ -35,18 +35,16 @@ ContractFlow AI enforces complete data segregation using **Session-Isolated Envi
 - **Dynamic Connection Binding**: The ChromaDB client establishes persistent DB links scoped *only* to the session storage folder, preventing any data leakages across other active sessions.
 - **Automated Hard-Deletion**: The moment a session is terminated via `POST /end-session`, the disk controller executes a recursive purge of the session folder, instantly erasing all indexed vectors, history traces, and registries.
 
-###  Dual-Layer Safety Guardrails
-The application implements pre-input and post-generation safety checking to preserve security and context relevance.
-- **Input Inspection**:
-  - **Prompt Injection Filter**: Blocks adversarial inputs aiming to override system instructions or extract configurations.
-  - **Off-Topic Refusals**: Ensures queries stay focused strictly on legal terms, agreements, liabilities, or general contract definitions.
-- **Output Grounding Validator**: Passes the generated answer alongside retrieved source contract chunks to a fact-verification engine. If claims are made that cannot be traced to the source context, the response is blocked as a hallucination.
-- **PII Leakage Prevention**: Input queries and output responses are continuously audited for Personally Identifiable Information. Using optimized regex patterns, any email addresses, phone numbers, Social Security Numbers (SSNs), and Credit Card details are scrubbed and replaced with placeholders like `[REDACTED_EMAIL]`.
+###  Safety Guardrails & Privacy
+The application implements lightweight, robust safety auditing to preserve privacy and data security:
+- **Input PII Verification**: Scans user queries for Personally Identifiable Information (PII) before processing to block sensitive credentials or personal info from leaking downstream.
+- **PII Scrubbing & Redaction**: Output responses are continuously audited. Using optimized regex patterns, any email addresses, phone numbers, Social Security Numbers (SSNs), and Credit Card details are automatically scrubbed and replaced with placeholders like `[REDACTED_EMAIL]`.
 
-###  Advanced RAG Pipeline
-Retrieval is optimized for complex legal terminology using a two-stage approach:
+###  Advanced RAG & Memory Pipeline
+Retrieval and interaction are optimized for complex legal terminology:
 - **Max Marginal Relevance (MMR)**: Standard semantic retrievers often load near-duplicate sections due to repetitive contract phrasing. MMR runs PyTorch vector math to maximize chunk diversity alongside semantic closeness.
 - **Cross-Encoder Re-ranking**: Retrieved chunks are fed into a cross-encoder model (`ms-marco-MiniLM-L-6-v2`) to perform absolute joint query-context alignment grading, filtering out marginal results.
+- **Session-Isolated Chat Memory**: Conversation histories are saved per-document in local JSON files within their respective session folders (`storage/sessions/<session_id>/chat_memory/<document_id>.json`), maintaining clean multi-tenant data boundaries.
 - **Sliding Conversation Window**: Conversation memory uses a structured sliding context window to feed historical messages into LLM templates without overloading token capacity.
 
 ---
