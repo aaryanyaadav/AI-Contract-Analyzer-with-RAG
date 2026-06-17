@@ -11,9 +11,8 @@ class PromptBuilder:
         conversation_history=None
     ):
 
-        # =====================================
-        # CONVERSATION MEMORY
-        # =====================================
+        # Converstional memory
+
         history_text = ""
 
         if conversation_history:
@@ -35,9 +34,8 @@ class PromptBuilder:
                     f"{content}\n"
                 )
 
-        # =====================================
-        # RETRIEVED CONTEXT
-        # =====================================
+        # Retrieved context
+
         context_blocks = []
 
         for idx, chunk in enumerate(
@@ -83,9 +81,8 @@ Content:
             context_blocks
         )
 
-        # =====================================
-        # SYSTEM PROMPT
-        # =====================================
+        # System prompt
+
         system_prompt = """
 You are an advanced legal contract AI assistant.
 
@@ -106,9 +103,8 @@ STRICT RULES:
    explain the conflict clearly.
 """
 
-        # =====================================
-        # USER PROMPT
-        # =====================================
+        # User prompt
+
         user_prompt = f"""
 ==============================
 CONVERSATION HISTORY
