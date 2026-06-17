@@ -9,9 +9,7 @@ class RetrievalRouter:
 
         configs = {
 
-            # =================================
-            # CONTRACT SUMMARY
-            # =================================
+
             "summary": {
 
                 # Fewer reranker candidates
@@ -21,9 +19,6 @@ class RetrievalRouter:
                 "final_k": 6
             },
 
-            # =================================
-            # RISK ANALYSIS
-            # =================================
             "risk": {
 
                 "initial_fetch_k": 10,
@@ -31,9 +26,7 @@ class RetrievalRouter:
                 "final_k": 5
             },
 
-            # =================================
-            # OBLIGATIONS
-            # =================================
+
             "obligation": {
 
                 "initial_fetch_k": 8,
@@ -41,9 +34,7 @@ class RetrievalRouter:
                 "final_k": 4
             },
 
-            # =================================
-            # COMPARISON
-            # =================================
+
             "comparison": {
 
                 "initial_fetch_k": 10,
@@ -51,9 +42,7 @@ class RetrievalRouter:
                 "final_k": 5
             },
 
-            # =================================
-            # CLAUSE SEARCH
-            # =================================
+
             "clause_search": {
 
                 "initial_fetch_k": 6,
@@ -61,9 +50,7 @@ class RetrievalRouter:
                 "final_k": 3
             },
 
-            # =================================
-            # GENERAL QA
-            # =================================
+            
             "qa": {
 
                 "initial_fetch_k": 8,
