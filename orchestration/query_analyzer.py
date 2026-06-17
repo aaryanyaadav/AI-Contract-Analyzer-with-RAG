@@ -9,9 +9,8 @@ class QueryAnalyzer:
 
         self.llm = llm_client
 
-    # =========================================
     # ANALYZE QUERY
-    # =========================================
+
     def analyze(
 
         self,
@@ -95,9 +94,8 @@ Category:
                 .lower()
             )
 
-            # =====================================
-            # VALID CATEGORIES
-            # =====================================
+            # Valid categories
+
             allowed_categories = [
 
                 "summary",
@@ -113,19 +111,17 @@ Category:
                 "qa"
             ]
 
-            # =====================================
-            # EXACT MATCH
-            # =====================================
+            # Exact match
+
             if cleaned in allowed_categories:
 
                 return cleaned
 
-            # =====================================
-            # FALLBACK HEURISTICS
-            # =====================================
+            # Fallback heuristics   
+            
             query_lower = query.lower()
 
-            # SUMMARY
+            # Summary
             if any(
 
                 word in query_lower
@@ -146,7 +142,7 @@ Category:
 
                 return "summary"
 
-            # OBLIGATION
+            # Obligation
             if any(
 
                 word in query_lower
@@ -167,7 +163,7 @@ Category:
 
                 return "obligation"
 
-            # RISK
+            # Risk
             if any(
 
                 word in query_lower
@@ -192,7 +188,7 @@ Category:
 
                 return "risk"
 
-            # COMPARISON
+            # Comparison
             if any(
 
                 word in query_lower
@@ -211,7 +207,7 @@ Category:
 
                 return "comparison"
 
-            # CLAUSE SEARCH
+            # Clause search
             if any(
 
                 word in query_lower
