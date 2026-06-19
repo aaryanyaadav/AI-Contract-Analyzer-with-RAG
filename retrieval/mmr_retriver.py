@@ -5,6 +5,7 @@ from ingestion.vector_store import (
     ContractVectorStore
 )
 
+# pyrefly: ignore [missing-import]
 from sentence_transformers.util import (
     cos_sim
 )
@@ -237,3 +238,9 @@ class MMRRetriever:
             })
 
         return final_results
+
+    def close(self):
+
+        if hasattr(self, 'vector_store') and self.vector_store:
+
+            self.vector_store.close()
