@@ -8,6 +8,7 @@ class Reranker:
     def __init__(self):
 
 
+
         self.model = (
             ModelManager
             .get_reranker_model()
