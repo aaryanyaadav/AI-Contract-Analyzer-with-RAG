@@ -6,4 +6,4 @@ streamlit
 fastapi
 uvicorn
 python-multipart
-    
+groq
