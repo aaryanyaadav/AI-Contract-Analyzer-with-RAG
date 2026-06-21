@@ -42,3 +42,4 @@ storage/sessions/
 storage/chat_memory/
 storage/chroma_db/
 storage/llm_daily_usage.json
+storage/document_registry.json
