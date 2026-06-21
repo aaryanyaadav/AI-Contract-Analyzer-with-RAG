@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "give me a summary about this contract"
+  },
+  {
+    "role": "assistant",
+    "content": true
+  }
+]

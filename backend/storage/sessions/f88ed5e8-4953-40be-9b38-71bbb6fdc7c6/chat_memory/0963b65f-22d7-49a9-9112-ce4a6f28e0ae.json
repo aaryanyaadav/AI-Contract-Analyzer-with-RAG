@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "summarize this"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided contract context, here is a summary:\n\nThis contract is between an NGO/UN agency (First Party) and a Company/Agent (Second Party) for humanitarian activities in Idleb Governorate, Syria. The contract outlines the objectives, obligations, and terms of the agreement.\n\nKey points include:\n\n1. The First Party intends to transfer money to people in areas outside of the Syrian government's control.\n2. The Second Party has the capacity, experience, and diligence to facilitate the transfers.\n3. The Second Party will provide the necessary personnel, security, logistics, and communication arrangements to ensure secure and timely delivery of cash.\n4. The First Party must apply the highest reasonable standard of diligence to ensure the money is not transferred to designated terrorist entities.\n5. The contract duration is for a period of ______ months, and either party can terminate with two weeks' notice.\n6. Disputes will be resolved through consultation, clear communication, and a mutually agreed mediator on a cost-sharing basis.\n\nThe contract also includes sections on:\n\n- Working capital and transaction sizes\n- Aid agencies' responsibilities in knowing their suppliers\n- Beneficial ownership and control of the Second Party\n- Risk assessment and management of money laundering and terrorist financing risks."
+  }
+]
