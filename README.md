@@ -348,8 +348,8 @@ Ensure your browser has access to the local port `8000` to hit the REST endpoint
 ##  Author & Creator
 
 This system was created and architected by:
-- **Author**: **Aaryan Yadav**
+- **Author**: **Aryan Yadav**
 - **GitHub**: [@aaryanyaadav](https://github.com/aaryanyaadav)
 - **Project Repository**: [AI-Contract-Analyzer-with-RAG](https://github.com/aaryanyaadav/AI-Contract-Analyzer-with-RAG)
 
-If you find this project helpful for contract automation or RAG-based analysis, please give it a ⭐ on GitHub!
+
