@@ -1,8 +1,3 @@
-pymupdf
-python-docx
-pytesseract
-pillow
-streamlit
 fastapi
 uvicorn
 python-multipart
@@ -12,5 +7,15 @@ openai
 chromadb
 sentence-transformers
 torch
+transformers
+python-docx
+pymupdf
 docling
 docling-core
+pillow
+pytesseract
+pymupdf
+python-docx
+pytesseract
+pillow
+streamlit
