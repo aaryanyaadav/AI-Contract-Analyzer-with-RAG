@@ -6,4 +6,11 @@ streamlit
 fastapi
 uvicorn
 python-multipart
+python-dotenv
 groq
+openai
+chromadb
+sentence-transformers
+torch
+docling
+docling-core
