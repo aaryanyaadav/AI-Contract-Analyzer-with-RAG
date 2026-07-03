@@ -60,9 +60,7 @@ function getWelcomeMessageHTML() {
     `;
 }
 
-// =====================================
 // SESSION MANAGEMENT
-// =====================================
 
 let sessionId = localStorage.getItem(
     "session_id"
@@ -84,9 +82,8 @@ console.log(
 );
 
 
-// =====================================
+
 // RESTORE SESSION
-// =====================================
 
 window.addEventListener(
 
@@ -411,9 +408,7 @@ function renderConversationHistory(messages) {
     });
 }
 
-// =====================================
 // UPLOAD PICKER
-// =====================================
 
 function triggerUpload() {
 
@@ -422,9 +417,9 @@ function triggerUpload() {
         .click();
 }
 
-// =====================================
+
 // MESSAGE
-// =====================================
+
 
 function addMessage(
 
@@ -455,9 +450,9 @@ function addMessage(
     return div;
 }
 
-// =====================================
+
 // REMOVE WELCOME
-// =====================================
+
 
 function removeWelcome() {
 
@@ -472,9 +467,7 @@ function removeWelcome() {
     }
 }
 
-// =====================================
 // UPLOAD
-// =====================================
 
 async function uploadFile(event) {
 
@@ -587,9 +580,8 @@ async function uploadFile(event) {
 
 
 
-// =====================================
+
 // SEND MESSAGE
-// =====================================
 
 async function sendMessage() {
 
@@ -677,9 +669,7 @@ async function sendMessage() {
     }
 }
 
-// =====================================
 // DELETE CONTRACT
-// =====================================
 
 async function deleteCurrentContract() {
 
