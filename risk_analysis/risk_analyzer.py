@@ -40,7 +40,7 @@ class RiskAnalyzer:
                         },
 
                         {
-                            "risk_flag":
+                            "risk_level":
                             "High"
                         }
                     ]
