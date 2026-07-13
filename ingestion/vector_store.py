@@ -83,51 +83,71 @@ class ContractVectorStore:
 
         for chunk in chunks:
 
+            # Store document text
             documents.append(
                 chunk["text"]
             )
 
+            # Keep the existing chunk ID (UUID)
             ids.append(
                 chunk["chunk_id"]
             )
 
+            # Enhanced metadata for retrieval + evaluation
             metadatas.append({
 
-                "document_id":
-                document_id,
+                "document_id": document_id,
+                "chunk_id": chunk["chunk_id"],
+                "chunk_index": chunk.get("chunk_index"),
+                "filename": filename,
+                # Structural Metadata
+                "page_number": chunk.get(
+                    "page_number",
+                    None
+                ),
 
-                "filename":
-                filename,
+                "parent_section": chunk.get(
+                    "parent_section",
+                    None
+                ),
 
-                "parent_section":
-                chunk["parent_section"],
+                "section_heading": chunk.get(
+                    "section_heading",
+                    None
+                ),
 
-                "risk_level":
-                chunk.get(
+                "chunk_length": len(
+                    chunk["text"]
+                ),
+
+                # Business Metadata
+                "risk_level": chunk.get(
                     "risk_level",
                     "Low"
                 ),
 
-                "risk_category":
-                chunk.get(
+                "risk_category": chunk.get(
                     "risk_category",
                     "Other"
                 ),
 
-                "risk_reason":
-                chunk.get(
+                "risk_reason": chunk.get(
                     "risk_reason",
                     ""
                 ),
 
-                "needs_review":
-                str(
-                    chunk["needs_review"]
+                "needs_review": str(
+                    chunk.get(
+                        "needs_review",
+                        False
+                    )
                 ),
 
-                "is_table":
-                str(
-                    chunk["is_table"]
+                "is_table": str(
+                    chunk.get(
+                        "is_table",
+                        False
+                    )
                 )
             })
 
@@ -146,7 +166,6 @@ class ContractVectorStore:
                 convert_to_numpy=True
             ).tolist()
         )
-
 
         print(
             "[VectorStore] "
@@ -169,6 +188,7 @@ class ContractVectorStore:
             f"Successfully indexed "
             f"{len(chunks)} chunks."
         )
+
 
 
     def query_contracts(
