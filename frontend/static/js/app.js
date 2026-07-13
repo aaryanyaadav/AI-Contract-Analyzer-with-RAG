@@ -487,7 +487,7 @@ async function uploadFile(event) {
             progressContainer.style.display = "block";
             progressBar.style.width = "0%";
             progressBar.style.background = ""; // Reset background color
-            progressText.textContent = "Uploading contract... 0%";
+            progressText.textContent = "Just a Moment...";
         }
 
         const formData = new FormData();
@@ -615,7 +615,7 @@ async function sendMessage() {
     input.value = "";
 
     const loading =
-        addLoadingMessage("Uploading contract...");
+        addLoadingMessage("Just a Moment...");
 
     try {
 
@@ -854,6 +854,293 @@ function updateSelectedContractHeader() {
     }
 }
 
+function formatMarkdown(text) {
+    let escaped = escapeHtml(text);
+    // Replace **bold** with <strong>bold</strong>
+    escaped = escaped.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    return escaped;
+}
+
+// Inject CSS styles dynamically for the three-dots dropdown and modal
+(function () {
+    const style = document.createElement("style");
+    style.textContent = `
+        .message.bot-message {
+            position: relative;
+            padding-right: 44px !important;
+        }
+        .message-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        .message-action-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.45);
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .message-action-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+        .message-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 6px;
+            background: #181824;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            padding: 4px;
+            min-width: 140px;
+            z-index: 100;
+        }
+        .message-dropdown.active {
+            display: block;
+        }
+        .dropdown-item {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+        }
+        
+        /* Sources Modal styling */
+        .sources-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .sources-modal.visible {
+            display: flex;
+        }
+        .sources-modal-content {
+            background: #11111a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            width: 90%;
+            max-width: 650px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .sources-modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: text-between;
+            justify-content: space-between;
+        }
+        .sources-modal-header h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .sources-modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .sources-modal-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+        .sources-modal-list {
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .modal-source-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .modal-source-text {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+        .modal-source-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .modal-source-badge {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .modal-source-badge.risk-high {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+        .modal-source-badge.risk-medium {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+        }
+        .modal-source-badge.risk-low {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+function getOrCreateSourcesModal() {
+    let modal = document.getElementById("sourcesModal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "sourcesModal";
+        modal.className = "sources-modal";
+        modal.addEventListener("click", closeSourcesModal);
+
+        modal.innerHTML = `
+            <div class="sources-modal-content" onclick="event.stopPropagation()">
+                <div class="sources-modal-header">
+                    <h3>Sources & Citations</h3>
+                    <button class="sources-modal-close" onclick="hideSourcesModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div id="sourcesModalList" class="sources-modal-list"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    return modal;
+}
+
+function hideSourcesModal() {
+    const modal = document.getElementById("sourcesModal");
+    if (modal) {
+        modal.classList.remove("visible");
+    }
+}
+
+function closeSourcesModal(e) {
+    hideSourcesModal();
+}
+
+function openSourcesModal(sources, e) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
+    // Close active dropdowns
+    document.querySelectorAll(".message-dropdown.active").forEach(d => {
+        d.classList.remove("active");
+    });
+
+    const modal = getOrCreateSourcesModal();
+    const list = document.getElementById("sourcesModalList");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    sources.forEach(src => {
+        const textContent = src.text || "";
+        const filename = src.metadata?.filename || "Unknown document";
+        const sectionName = src.metadata?.parent_section || "General Section";
+        const riskLevel = src.metadata?.risk_level || "Low";
+        const riskCategory = src.metadata?.risk_category || "General";
+        const riskClass = `risk-${riskLevel.toLowerCase()}`;
+
+        const item = document.createElement("div");
+        item.className = "modal-source-item";
+        item.innerHTML = `
+            <div class="modal-source-text">"${escapeHtml(textContent)}"</div>
+            <div class="modal-source-meta">
+                <span class="modal-source-badge">Doc: ${escapeHtml(filename)}</span>
+                <span class="modal-source-badge">Sec: ${escapeHtml(sectionName)}</span>
+                <span class="modal-source-badge ${riskClass}">Risk: ${escapeHtml(riskLevel)} (${escapeHtml(riskCategory)})</span>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+
+    modal.classList.add("visible");
+}
+
+function toggleMessageMenu(btn, e) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    const dropdown = btn.nextElementSibling;
+    const isActive = dropdown.classList.contains("active");
+
+    // Close other dropdowns
+    document.querySelectorAll(".message-dropdown.active").forEach(d => {
+        if (d !== dropdown) d.classList.remove("active");
+    });
+
+    dropdown.classList.toggle("active", !isActive);
+}
+
+// Close dropdowns on outside click
+document.addEventListener("click", () => {
+    document.querySelectorAll(".message-dropdown.active").forEach(d => {
+        d.classList.remove("active");
+    });
+});
+
 function addBotMessageWithSources(text, sources) {
     removeWelcome();
 
@@ -873,60 +1160,46 @@ function addBotMessageWithSources(text, sources) {
             lines.forEach(line => {
                 line = line.trim();
                 if (line.startsWith("*") || line.startsWith("-")) {
-                    listHtml += `<li>${escapeHtml(line.substring(1).trim())}</li>`;
+                    listHtml += `<li>${formatMarkdown(line.substring(1).trim())}</li>`;
                 } else {
-                    listHtml += `<li>${escapeHtml(line)}</li>`;
+                    listHtml += `<li>${formatMarkdown(line)}</li>`;
                 }
             });
             listHtml += "</ul>";
             formattedText += listHtml;
         } else {
-            formattedText += `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`;
+            formattedText += `<p>${formatMarkdown(p).replace(/\n/g, "<br>")}</p>`;
         }
     });
 
     div.innerHTML = formattedText;
 
     if (sources && sources.length > 0) {
-        const sourcesContainer = document.createElement("div");
-        sourcesContainer.className = "sources-container";
+        const actionsContainer = document.createElement("div");
+        actionsContainer.className = "message-actions";
 
-        let sourcesListHtml = "";
-        sources.forEach((src) => {
-            const textContent = src.text || "";
-            const filename = src.metadata?.filename || "Unknown document";
-            const sectionName = src.metadata?.parent_section || "General Section";
-            const riskLevel = src.metadata?.risk_level || "Low";
-            const riskCategory = src.metadata?.risk_category || "General";
-
-            const riskClass = `risk-${riskLevel.toLowerCase()}`;
-
-            sourcesListHtml += `
-                <div class="source-item">
-                    <div class="source-text">"${escapeHtml(textContent)}"</div>
-                    <div class="source-meta">
-                        <span class="source-badge">Doc: ${escapeHtml(filename)}</span>
-                        <span class="source-badge">Sec: ${escapeHtml(sectionName)}</span>
-                        <span class="source-badge ${riskClass}">Risk: ${escapeHtml(riskLevel)} (${escapeHtml(riskCategory)})</span>
-                    </div>
-                </div>
-            `;
-        });
-
-        sourcesContainer.innerHTML = `
-            <details class="sources-details">
-                <summary>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; display: inline-block; margin-right: 4px;">
-                        <polyline points="6 9 12 15 18 9"></polyline>
+        actionsContainer.innerHTML = `
+            <button class="message-action-btn" onclick="toggleMessageMenu(this, event)" title="Message Actions">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="1.5"></circle>
+                    <circle cx="12" cy="5" r="1.5"></circle>
+                    <circle cx="12" cy="19" r="1.5"></circle>
+                </svg>
+            </button>
+            <div class="message-dropdown">
+                <button class="dropdown-item" onclick="openSourcesModal(JSON.parse(this.dataset.sources), event)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
-                    View Sources (${sources.length})
-                </summary>
-                <div class="sources-list">
-                    ${sourcesListHtml}
-                </div>
-            </details>
+                    View sources
+                </button>
+            </div>
         `;
-        div.appendChild(sourcesContainer);
+        const dropdownItem = actionsContainer.querySelector(".dropdown-item");
+        dropdownItem.dataset.sources = JSON.stringify(sources);
+
+        div.appendChild(actionsContainer);
     }
 
     chatMessages.appendChild(div);
