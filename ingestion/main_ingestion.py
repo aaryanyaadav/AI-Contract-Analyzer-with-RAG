@@ -219,6 +219,19 @@ class IngestionPipeline:
             )
         )
 
+        # export evaluation artifact
+        try:
+            from evaluation.exporter import EvaluationExporter
+            exporter = EvaluationExporter()
+            exporter.export(
+                document_id=document_id,
+                filename=filename,
+                metadata=metadata,
+                chunks=chunks
+            )
+        except Exception as e:
+            print(f"[IngestionPipeline] Error exporting evaluation metadata: {e}")
+
         # registry
         
         self.registry.register_document(
