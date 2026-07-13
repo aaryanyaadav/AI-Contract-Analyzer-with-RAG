@@ -183,55 +183,65 @@ class ClauseChunker:
                 )
             )
 
+        # Assign stable sequential chunk_index (0...N-1)
+        for idx, chunk in enumerate(chunks):
+            chunk["chunk_index"] = idx
+
         return chunks
 
     # package chunk
-    
     def _package_chunk(
-
         self,
-
         elements,
-
         parent_section
     ):
 
         combined_text = "\n\n".join([
-
             el["text"]
-
             for el in elements
         ])
 
-        avg_confidence = sum([
-
-            el["confidence"]
-
-            for el in elements
-
-        ]) / len(elements)
+        avg_confidence = (
+            sum([
+                el["confidence"]
+                for el in elements
+            ]) / len(elements)
+        )
 
         is_table = any([
-
             el["is_table"]
-
             for el in elements
         ])
 
+        # Collect page numbers from all elements
+        page_numbers = sorted(
+            list(
+                set(
+                    el.get("page_number")
+                    for el in elements
+                    if el.get("page_number") is not None
+                )
+            )
+        )
+
         return {
+            # Unique identifier (will be overridden by sequential integer in split_into_clauses)
+            "chunk_id": str(uuid.uuid4()),
 
-            "chunk_id":
-            str(uuid.uuid4()),
+            # Chunk content
+            "text": combined_text,
 
-            "text":
-            combined_text,
+            # Structure
+            "parent_section": parent_section,
+            "section_heading": parent_section,
+            "page_numbers": page_numbers,
+            "page_number": page_numbers[0] if page_numbers else None,
 
-            "parent_section":
-            parent_section,
+            # OCR / Parsing quality
+            "average_confidence": round(avg_confidence, 3),
+            "needs_review": avg_confidence < 0.80,
 
-            "needs_review":
-            avg_confidence < 0.80,
-
-            "is_table":
-            is_table
+            # Content information
+            "is_table": is_table,
+            "chunk_length": len(combined_text)
         }
