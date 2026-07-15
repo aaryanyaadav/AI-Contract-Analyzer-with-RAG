@@ -4,18 +4,11 @@ from evaluation.retrieval.retrieval_runner import RetrievalRunner
 from evaluation.retrieval.retrieval_metrics import calculate_metrics
 
 class RetrievalEvaluator:
-    """
-    Evaluator that loads benchmark queries, runs retrieval, and computes metrics.
-    Designed to support multiple relevant chunks per query from day one.
-    """
     def __init__(self, session_id: Optional[str] = None, chroma_path: Optional[str] = None):
         self.session_id = session_id
         self.chroma_path = chroma_path
 
     def evaluate(self, benchmark_rows: List[BenchmarkRow], k: int = 5) -> Dict[str, Any]:
-        """
-        Runs the retrieval evaluation pipeline.
-        """
         runner = RetrievalRunner(session_id=self.session_id, chroma_path=self.chroma_path)
         results = []
         
