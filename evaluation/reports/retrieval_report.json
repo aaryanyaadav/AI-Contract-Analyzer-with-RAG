@@ -1,0 +1,8 @@
+{
+    "benchmark_size": 60,
+    "k": 5,
+    "Precision@K": 0.2,
+    "Recall@K": 1.0,
+    "Hit@K": 1.0,
+    "MRR": 0.7486111111111111
+}
