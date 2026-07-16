@@ -72,12 +72,17 @@ class RAGOrchestrator:
 
         document_id,
 
-        conversation_history=None
+        conversation_history=None,
+
+        evaluation_mode=False
     ):
+        import time
 
         if conversation_history is None:
 
             conversation_history = []
+
+        start_total = time.perf_counter()
 
         # Initialize guardrails
         from orchestration.guardrails import GuardrailSystem
@@ -140,6 +145,7 @@ class RAGOrchestrator:
         )
 
 
+        start_prompt = time.perf_counter()
         prompts = (
             self.prompt_builder.build_prompt(
 
@@ -152,7 +158,9 @@ class RAGOrchestrator:
                 conversation_history
             )
         )
+        prompt_construction_time = time.perf_counter() - start_prompt
 
+        start_gen = time.perf_counter()
         answer = self.llm.generate(
 
             system_prompt=
@@ -161,7 +169,7 @@ class RAGOrchestrator:
             user_prompt=
             prompts["user_prompt"]
         )
-
+        llm_generation_time = time.perf_counter() - start_gen
 
 
         valid = self.response_validator.validate(
@@ -179,7 +187,17 @@ class RAGOrchestrator:
         sanitized_answer, _ = guardrails.sanitize_pii(answer)
         answer = sanitized_answer
 
-        return {
+        total_response_time = time.perf_counter() - start_total
+
+        embedding_time = getattr(self.retriever, "last_embedding_time", 0.0)
+        retrieval_time = getattr(self.retriever, "last_retrieval_time", 0.0)
+
+        llm_usage = getattr(self.llm, "last_usage", {})
+        prompt_tokens = llm_usage.get("prompt_tokens", 0)
+        completion_tokens = llm_usage.get("completion_tokens", 0)
+        total_tokens = llm_usage.get("total_tokens", 0)
+
+        res = {
 
             "answer":
              answer,
@@ -190,6 +208,21 @@ class RAGOrchestrator:
             "query_type":
             query_type
         }
+
+        if evaluation_mode:
+            res["metrics"] = {
+                "embedding_time": embedding_time,
+                "retrieval_time": retrieval_time,
+                "prompt_construction_time": prompt_construction_time,
+                "llm_generation_time": llm_generation_time,
+                "total_response_time": total_response_time,
+                "number_of_retrieved_chunks": len(reranked_chunks),
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens
+            }
+
+        return res
 
     def close(self):
 
