@@ -26,11 +26,8 @@ class Reranker:
             self.model.predict(pairs)
         )
         scored_chunks = []
-
         for chunk, score in zip(
-
             retrieved_chunks,
-
             scores
         ):
             chunk["rerank_score"] = (
