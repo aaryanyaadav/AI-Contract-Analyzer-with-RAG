@@ -1,29 +1,17 @@
 import json
-
 from llm.llm_client import LLMClient
-
-
 class LLMRiskClassifier:
-
     def __init__(self):
-
         self.llm = LLMClient()
-
     def classify_risk_batch(
         self,
         chunks
     ):
-
-
         clause_text = ""
-
         for idx, chunk in enumerate(chunks):
-
             clause_text += f"""
-
 CLAUSE {idx+1}:
 {chunk['text']}
-
 """
 
         system_prompt = """
@@ -67,39 +55,24 @@ Analyze these contract clauses.
 
 {clause_text}
 """
-
         try:
-
             response = self.llm.generate(
-
                 system_prompt=system_prompt,
-
                 user_prompt=user_prompt
             )
-
             parsed = json.loads(response)
-
             return parsed
-
         except Exception as e:
-
             print(
                 f"[Risk Batch Error]: {e}"
             )
-
             # Safe fallback
             fallback = []
-
             for _ in chunks:
-
                 fallback.append({
-
                     "risk_level": "Low",
-
                     "risk_category": "Other",
-
                     "risk_reason":
                     "Classification failed."
                 })
-
             return fallback
