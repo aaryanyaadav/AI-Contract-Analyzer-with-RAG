@@ -9,7 +9,6 @@ from openai import OpenAI
 
 load_dotenv(override=True)
 
-
 class LLMClient:
 
     _quota_lock = threading.Lock()
