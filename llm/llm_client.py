@@ -4,31 +4,41 @@ import threading
 from datetime import datetime
 from dotenv import load_dotenv
 from groq import Groq
+# pyrefly: ignore [missing-import]
 from openai import OpenAI
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 class LLMClient:
 
     _quota_lock = threading.Lock()
 
-    def __init__(self):
+    def __init__(self, model_name=None):
 
-        api_key = os.getenv("GROQ_API_KEY")
-
-        if not api_key:
-            raise ValueError(
-                "GROQ_API_KEY missing in .env"
+        provider = os.getenv("LLM_PROVIDER", "groq").lower()
+        if provider == "together":
+            api_key = os.getenv("TOGETHER_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "TOGETHER_API_KEY missing in .env"
+                )
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url="https://api.together.xyz/v1"
             )
-
-        self.client = OpenAI(
-            api_key=api_key,
-            base_url="https://api.groq.com/openai/v1"
-        )
-
-        # Excellent free Groq model
-        self.model_name = "llama-3.1-8b-instant"
+            self.model_name = model_name or "meta-llama/Meta-Llama-3-8b-instruct"
+        else:
+            api_key = os.getenv("GROQ_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "GROQ_API_KEY missing in .env"
+                )
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url="https://api.groq.com/openai/v1"
+            )
+            self.model_name = model_name or os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
         self.daily_request_limit = int(
             os.getenv(
@@ -41,6 +51,12 @@ class LLMClient:
             "LLM_DAILY_USAGE_PATH",
             "storage/llm_daily_usage.json"
         )
+
+        self.last_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        }
 
     def _load_daily_usage(self):
 
@@ -165,6 +181,19 @@ class LLMClient:
                 max_tokens=max_tokens,
                 temperature=temperature
             )
+
+            if hasattr(response, "usage") and response.usage:
+                self.last_usage = {
+                    "prompt_tokens": getattr(response.usage, "prompt_tokens", 0),
+                    "completion_tokens": getattr(response.usage, "completion_tokens", 0),
+                    "total_tokens": getattr(response.usage, "total_tokens", 0)
+                }
+            else:
+                self.last_usage = {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
 
             return response.choices[0].message.content
 
