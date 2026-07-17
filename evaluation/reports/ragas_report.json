@@ -1,0 +1,14 @@
+{
+    "benchmark_size": 40,
+    "backend": "http://localhost:8000",
+    "evaluation_engine": {
+        "name": "Fallback Semantic Evaluator",
+        "version": "1.0.0",
+        "llm": "llama-3.1-8b-instant",
+        "embeddings": "None"
+    },
+    "faithfulness": 0.63875,
+    "answer_correctness": 0.6224999999999999,
+    "context_precision": 0.635,
+    "context_recall": 0.5974999999999999
+}
