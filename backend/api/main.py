@@ -184,6 +184,8 @@ async def chat(data: dict):
             document_id
         )
         
+        evaluation_mode = data.get("evaluation_mode", False)
+
         chatbot = RAGOrchestrator(
             chroma_path=session_data["chroma_path"]
         )
@@ -194,7 +196,9 @@ async def chat(data: dict):
 
             document_id=document_id,
 
-            conversation_history=conversation_history
+            conversation_history=conversation_history,
+
+            evaluation_mode=evaluation_mode
         )
 
         answer = result.get("answer", "")
@@ -220,7 +224,7 @@ async def chat(data: dict):
             content=answer
         )
 
-        return {
+        response_payload = {
 
             "success": True,
 
@@ -233,6 +237,11 @@ async def chat(data: dict):
 
             "query_type": result.get("query_type")
         }
+
+        if evaluation_mode and "metrics" in result:
+            response_payload["metrics"] = result["metrics"]
+
+        return response_payload
 
     except Exception as e:
 
@@ -307,7 +316,6 @@ async def delete_contract(data: dict):
 # SESSION STATE
 
 @app.get("/session-state")
-
 async def session_state(session_id: str | None = None):
 
     try:
@@ -353,7 +361,6 @@ async def session_state(session_id: str | None = None):
             "success": False,
             "error": str(e)
         }
-
 
 @app.post("/session-active-document")
 
@@ -402,10 +409,7 @@ async def set_session_active_document(data: dict):
             "success": False,
             "error": str(e)
         }
-
-
 @app.post("/end-session")
-
 async def end_session(data: dict):
 
     try:
@@ -422,14 +426,12 @@ async def end_session(data: dict):
         return {
             "success": True
         }
-
     except Exception as e:
 
         return {
             "success": False,
             "error": str(e)
         }
-
 # SERVE FRONTEND STATIC & TEMPLATES
 
 app.mount("/frontend/static", StaticFiles(directory="frontend/static"), name="static")
@@ -438,7 +440,6 @@ app.mount("/frontend/static", StaticFiles(directory="frontend/static"), name="st
 async def serve_index():
     with open("frontend/templetes/index.html", "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
-
 
 # Ping
 
