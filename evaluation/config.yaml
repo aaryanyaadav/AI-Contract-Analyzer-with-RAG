@@ -1,0 +1,4 @@
+session_id: "bda10496-9291-47a9-93bc-f19ec1706cf5"
+benchmark: "evaluation/benchmark/Benchmark dataset.csv"
+top_k: 5
+backend_url: "http://localhost:8000"
