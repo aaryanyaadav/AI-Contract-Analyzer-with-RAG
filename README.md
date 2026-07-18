@@ -413,7 +413,7 @@ Evaluated using the Semantic Fallback Evaluation Engine powered by `llama-3.1-8b
 * **Context Precision**: `0.6350` (63.50% relevance of retrieved context sections)
 * **Context Recall**: `0.5975` (59.75% coverage of required target details in the retrieved chunks)
 
-### 🔍 Retrieval & Generation Quality Analysis
+### Retrieval & Generation Quality Analysis
 
 #### How is our Retrieval performing?
 * **Perfect Recall & Hit Rate**: The retrieval pipeline achieves a perfect **100% Hit@5 and Recall@5**. This proves that the retriever never misses the correct clause when searching the contract database.
