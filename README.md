@@ -440,7 +440,7 @@ Future optimization strategies include:
 ##  Author & Creator
 
 This system was created and architected by:
-- **Author**: **Aryan Yadav**
+- **Author**: **Aryan Kumar Yadav**
 - **GitHub**: [@aaryanyaadav](https://github.com/aaryanyaadav)
 - **Project Repository**: [AI-Contract-Analyzer-with-RAG](https://github.com/aaryanyaadav/AI-Contract-Analyzer-with-RAG)
 
